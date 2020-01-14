@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="proyecto2" default="all" basedir="." >
+
+  <property name="build.dir"     value="build" />
+  <property name="src.dir"       value="src" />
+  <property name="lib.dir"       value="lib" />
+  <property name="doc.dir"       value="doc" />
+  <property name="resources.dir" value="resources" />
+
+  <target name="all" depends="cliente-proyecto2.jar,servidor-proyecto2.jar" />
+
+  <target name="cliente-proyecto2.jar" depends="compile.proyecto2">
+    <jar jarfile="cliente-proyecto2.jar">
+      <zipfileset dir="${build.dir}" prefix="" />
+      <fileset dir="${resources.dir}" />
+      <manifest>
+        <attribute name="Main-Class" value="mx.unam.ciencias.icc.ClienteProyecto2"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="servidor-proyecto2.jar" depends="compile.proyecto2">
+    <jar jarfile="servidor-proyecto2.jar">
+      <zipfileset dir="${build.dir}" prefix="" />
+      <fileset dir="${resources.dir}" />
+      <manifest>
+        <attribute name="Main-Class" value="mx.unam.ciencias.icc.ServidorProyecto2"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="compile.proyecto2">
+    <mkdir dir="${build.dir}"/>
+    <javac srcdir="${src.dir}"
+           destdir="${build.dir}"
+           debug="true"
+           debuglevel="lines,vars,source"
+           includeantruntime="false"
+           deprecation="true"
+           nowarn="off">
+      <classpath>
+        <fileset dir="${lib.dir}">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+      <compilerarg value="-Xlint:unchecked"/>
+    </javac>
+  </target>
+
+  <target name="doc" depends="compile.proyecto2">
+    <mkdir dir="${doc.dir}"/>
+    <javadoc packagenames="mx.unam.ciencias.icc.*"
+             sourcepath="src"
+             defaultexcludes="yes"
+             destdir="${doc.dir}"
+             charset="UTF-8"
+             author="false"
+             version="false"
+             use="true"
+             windowtitle="Introducción a Ciencias de la Computación">
+      <doctitle><![CDATA[<h1>Introducción a Ciencias de la Computación</h1>]]></doctitle>
+      <link href="https://docs.oracle.com/javase/8/docs/api/" />
+      <link href="http://junit.org/junit4/javadoc/latest/" />
+      <link href="https://docs.oracle.com/javafx/2/api/" />
+      <classpath>
+        <pathelement location="${lib.dir}/junit.jar" />
+        <pathelement location="${lib.dir}/hamcrest-core.jar" />
+      </classpath>
+    </javadoc>
+  </target>
+
+  <target name="clean">
+    <delete file="cliente-proyecto2.jar"/>
+    <delete file="servidor-proyecto2.jar"/>
+    <delete dir="${build.dir}"/>
+    <delete dir="${doc.dir}"/>
+  </target>
+
+  <target name="test" depends="compile.proyecto2">
+    <junit printsummary="yes" haltonfailure="no">
+      <formatter type="plain" usefile="false" />
+      <classpath>
+        <pathelement path="${build.dir}" />
+        <pathelement location="${lib.dir}/junit.jar" />
+        <pathelement location="${lib.dir}/hamcrest-core.jar" />
+      </classpath>
+      <batchtest fork="yes">
+        <fileset dir="${src.dir}">
+          <include name="**/*Test*.java" />
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+</project>
